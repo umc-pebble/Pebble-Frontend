@@ -1,0 +1,7 @@
+{
+  "name": "pebble-root",
+  "scripts": {
+    "dev": "cd Pebble && npm run dev",
+    "install:all": "cd Pebble && npm install"
+  }
+}
