@@ -14,6 +14,8 @@ const config: Config = {
         'title-01-m': ['28px', { lineHeight: '1.3', fontWeight: '500' }],
         'title-02-sb': ['24px', { lineHeight: '1.3', fontWeight: '600' }],
         'title-02-m': ['24px', { lineHeight: '1.3', fontWeight: '500' }],
+        'title-03-sb': ['20px', { lineHeight: '1.3', fontWeight: '600' }],
+        'title-03-m': ['20px', { lineHeight: '1.3', fontWeight: '500' }],
         'body-01-sb': ['18px', { lineHeight: '1.5', fontWeight: '600' }],
         'body-01-m': ['18px', { lineHeight: '1.5', fontWeight: '500' }],
         'body-02-sb': ['16px', { lineHeight: '1.5', fontWeight: '600' }],
