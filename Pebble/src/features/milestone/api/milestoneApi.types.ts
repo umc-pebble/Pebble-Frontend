@@ -1,4 +1,4 @@
-export type MilestoneDateType = "SINGLE" | "RANGE" | "REPEAT";
+export type MilestoneDateType = "SINGLE" | "RANGE" | "MULTIPLE";
 export type MilestoneEditScope = "THIS_ONLY" | "ALL";
 export type MilestoneDeleteScope = "THIS_ONLY" | "ALL";
 
@@ -10,7 +10,6 @@ export type MilestoneResponse = {
   dateType: MilestoneDateType;
   startDate?: string | null;
   endDate?: string | null;
-  repeatDays?: string | null;
   isCompleted?: boolean;
   displayOrder?: number;
   createdAt?: string;
@@ -30,7 +29,7 @@ export type CreateMilestoneRequest = {
   dateType: MilestoneDateType;
   startDate?: string | null;
   endDate?: string | null;
-  repeatDays?: string | null;
+  dates?: string[] | null;
 };
 
 export type UpdateMilestoneRequest = Partial<CreateMilestoneRequest> & {

@@ -16,8 +16,9 @@ export type ScheduleStyleFields = {
 export type TaskItem = ScheduleEntityBase &
   ScheduleStyleFields & {
     itemType?: "task";
+    categoryId?: string;
     milestoneId?: string;
-    dateType?: "SINGLE" | "RANGE" | "MULTI";
+    dateType?: "SINGLE" | "RANGE" | "MULTIPLE";
     isCompleted?: boolean;
     completedAt?: string;
     displayOrder?: number;
@@ -36,8 +37,7 @@ export type MilestoneItem = ScheduleEntityBase &
   ScheduleStyleFields & {
     itemType?: "milestone";
     seriesId?: number;
-    dateType?: "SINGLE" | "RANGE" | "REPEAT";
-    repeatDays?: string;
+    dateType?: "SINGLE" | "RANGE" | "MULTIPLE";
     isCompleted?: boolean;
     displayOrder?: number;
     tasks?: TaskItem[];

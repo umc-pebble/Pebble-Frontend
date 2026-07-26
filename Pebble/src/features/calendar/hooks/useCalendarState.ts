@@ -7,10 +7,10 @@ import { useCalendarScheduleActions } from "@/features/calendar/hooks/useCalenda
 import { getCategories } from "@/features/category/api/categoryApi";
 import { getMilestones } from "@/features/milestone/api/milestoneApi";
 import {
-  getMilestoneTasks,
-  getStandaloneTasks,
+  getTasks,
 } from "@/features/task/api/taskApi";
 import { getAccessToken } from "@/services/api";
+import { replaceTasksInCategories } from "@/features/calendar/utils/calendarStateUtils";
 
 export type {
   CalendarState,
@@ -70,29 +70,29 @@ export const useCalendarState = (): CalendarStateModel => {
           setIsCalendarLoading(true);
         }
         const nextCategories = await getCategories();
-        const [categoriesWithMilestones, nextStandaloneTasks] =
+        const [categoriesWithMilestones, nextTasks] =
           await Promise.all([
             Promise.all(
               nextCategories.map(async (category) => {
                 const milestones = await getMilestones(category.id);
-                const milestonesWithTasks = await Promise.all(
-                  milestones.map(async (milestone) => ({
-                    ...milestone,
-                    tasks: await getMilestoneTasks(milestone.id),
-                  })),
-                );
-
                 return {
                   ...category,
-                  items: milestonesWithTasks,
+                  items: milestones,
                 };
               }),
             ),
-            getStandaloneTasks(),
+            getTasks(),
           ]);
+        const nextCategoriesWithTasks = replaceTasksInCategories(
+          categoriesWithMilestones,
+          nextTasks,
+        );
+        const nextStandaloneTasks = nextTasks.filter(
+          (task) => !task.categoryId && !task.milestoneId,
+        );
 
         if (canUpdate()) {
-          replaceCategories(categoriesWithMilestones);
+          replaceCategories(nextCategoriesWithTasks);
           setStandaloneTasks(nextStandaloneTasks);
         }
       } catch (error) {

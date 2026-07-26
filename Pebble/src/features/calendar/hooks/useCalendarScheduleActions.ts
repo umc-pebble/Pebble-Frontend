@@ -91,7 +91,7 @@ export const useCalendarScheduleActions = ({
       input: CreateScheduleItemInput,
     ) => {
       const task =
-        (await requestCreateTask({ milestoneId, input })) ??
+        (await requestCreateTask({ categoryId, milestoneId, input })) ??
         createTaskEntity(input);
 
       setCategories((previousCategories) =>
@@ -109,8 +109,10 @@ export const useCalendarScheduleActions = ({
   );
 
   const createCategoryTask = useCallback(
-    (categoryId: string, input: CreateScheduleItemInput) => {
-      const task = createTaskEntity(input);
+    async (categoryId: string, input: CreateScheduleItemInput) => {
+      const task =
+        (await requestCreateTask({ categoryId, input })) ??
+        createTaskEntity(input);
 
       setCategories((previousCategories) =>
         appendTaskToCategory(previousCategories, categoryId, task),
@@ -122,16 +124,26 @@ export const useCalendarScheduleActions = ({
   );
 
   const updateCategoryTask = useCallback(
-    (categoryId: string, taskId: string, input: CreateScheduleItemInput) => {
+    async (categoryId: string, taskId: string, input: CreateScheduleItemInput) => {
+      const task = await requestUpdateTask({
+        taskId,
+        input,
+        isChildTask: true,
+      });
+
       setCategories((previousCategories) =>
-        updateCategoryTaskInList(previousCategories, categoryId, taskId, input),
+        task
+          ? updateCategoryTaskInList(previousCategories, categoryId, taskId, task)
+          : updateCategoryTaskInList(previousCategories, categoryId, taskId, input),
       );
     },
     [setCategories],
   );
 
   const deleteCategoryTask = useCallback(
-    (categoryId: string, taskId: string) => {
+    async (categoryId: string, taskId: string) => {
+      await requestDeleteTask({ taskId });
+
       setCategories((previousCategories) =>
         removeCategoryTaskFromList(previousCategories, categoryId, taskId),
       );

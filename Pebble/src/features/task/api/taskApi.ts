@@ -8,7 +8,7 @@ import {
 } from "./taskMapper";
 import type { GetTasksResponse, TaskDeleteScope, TaskResponse } from "./taskApi.types";
 
-export async function getStandaloneTasks(baseDate?: string): Promise<TaskItem[]> {
+export async function getTasks(baseDate?: string): Promise<TaskItem[]> {
   const data = await apiRequest<GetTasksResponse>({
     method: "GET",
     url: "/tasks",
@@ -16,6 +16,12 @@ export async function getStandaloneTasks(baseDate?: string): Promise<TaskItem[]>
   });
 
   return data?.tasks.map(mapTaskResponseToTask) ?? [];
+}
+
+export async function getStandaloneTasks(baseDate?: string): Promise<TaskItem[]> {
+  const tasks = await getTasks(baseDate);
+
+  return tasks.filter((task) => !task.categoryId && !task.milestoneId);
 }
 
 export async function getMilestoneTasks(
@@ -30,16 +36,18 @@ export async function getMilestoneTasks(
 }
 
 export async function createTask({
+  categoryId,
   milestoneId,
   input,
 }: {
+  categoryId?: string | null;
   milestoneId?: string | null;
   input: CreateScheduleItemInput;
 }): Promise<TaskItem | null> {
   const data = await apiRequest<TaskResponse>({
     method: "POST",
     url: "/tasks",
-    data: mapScheduleInputToCreateTaskRequest({ milestoneId, input }),
+    data: mapScheduleInputToCreateTaskRequest({ categoryId, milestoneId, input }),
   });
 
   return data ? mapTaskResponseToTask(data) : null;

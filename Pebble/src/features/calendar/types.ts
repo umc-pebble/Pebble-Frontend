@@ -58,13 +58,13 @@ export type CalendarActions = {
   createCategoryTask: (
     categoryId: string,
     input: CreateScheduleItemInput,
-  ) => TaskItem;
+  ) => Promise<TaskItem>;
   updateCategoryTask: (
     categoryId: string,
     taskId: string,
     input: CreateScheduleItemInput,
-  ) => void;
-  deleteCategoryTask: (categoryId: string, taskId: string) => void;
+  ) => Promise<void>;
+  deleteCategoryTask: (categoryId: string, taskId: string) => Promise<void>;
   createStandaloneTask: (input: CreateScheduleItemInput) => Promise<TaskItem>;
   updateStandaloneTask: (
     taskId: string,

@@ -83,7 +83,7 @@ export const CalendarLayoutProvider = ({
     }
 
     if (categoryId) {
-      createCategoryTask(categoryId, task);
+      await createCategoryTask(categoryId, task);
       return;
     }
 

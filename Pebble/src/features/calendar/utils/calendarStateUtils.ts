@@ -141,6 +141,31 @@ export const appendTaskToMilestone = (
       : category,
   );
 
+export const replaceTasksInCategories = (
+  categories: Category[],
+  tasks: TaskItem[],
+) =>
+  categories.map((category) => {
+    const categoryTasks = tasks.filter(
+      (task) => task.categoryId === category.id && !task.milestoneId,
+    );
+
+    return {
+      ...category,
+      tasks: categoryTasks.length > 0 ? cloneScheduleItems(categoryTasks) : undefined,
+      items: category.items.map((milestone) => ({
+        ...milestone,
+        tasks: cloneScheduleItems(
+          tasks.filter(
+            (task) =>
+              task.categoryId === category.id &&
+              task.milestoneId === milestone.id,
+          ),
+        ),
+      })),
+    };
+  });
+
 export const updateTaskInMilestone = (
   categories: Category[],
   categoryId: string,
