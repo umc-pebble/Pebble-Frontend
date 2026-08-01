@@ -302,6 +302,7 @@ export const useCalendarState = ({
 
   const categoryActions = useCalendarCategoryActions({
     categories,
+    reloadCalendarData: () => loadCalendarData(),
     setCategories,
     setSelectedCategoryId,
   });
@@ -309,8 +310,6 @@ export const useCalendarState = ({
     categories,
     reloadCalendarData: () => loadCalendarData(),
     standaloneTasks,
-    setCategories,
-    setStandaloneTasks,
   });
   return {
     currentUserId,

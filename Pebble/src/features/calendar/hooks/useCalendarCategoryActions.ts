@@ -18,17 +18,18 @@ import {
 } from "@/features/category/api/sharedCategoryApi";
 import {
   replaceCategoryList,
-  updateCategoryInList,
 } from "@/features/calendar/utils/calendarStateUtils";
 
 type UseCalendarCategoryActionsParams = {
   categories: Category[];
+  reloadCalendarData: () => Promise<void>;
   setCategories: Dispatch<SetStateAction<Category[]>>;
   setSelectedCategoryId: Dispatch<SetStateAction<string | null>>;
 };
 
 export const useCalendarCategoryActions = ({
   categories,
+  reloadCalendarData,
   setCategories,
   setSelectedCategoryId,
 }: UseCalendarCategoryActionsParams) => {
@@ -105,21 +106,12 @@ export const useCalendarCategoryActions = ({
         throw new Error("카테고리 생성 응답을 확인하지 못했어요.");
       }
 
-      const members = input.isShared ? input.members ?? [] : [];
-
-      setCategories((previousCategories) => [
-        ...previousCategories,
-        {
-          ...category,
-          isShared: members.length > 0 ? true : category.isShared,
-          members: members.length > 0 ? members : category.members,
-        },
-      ]);
       setSelectedCategoryId(null);
+      await reloadCalendarData();
 
       return category;
     },
-    [setCategories, setSelectedCategoryId],
+    [reloadCalendarData, setSelectedCategoryId],
   );
 
   const updateCategory = useCallback(
@@ -127,14 +119,8 @@ export const useCalendarCategoryActions = ({
       const previousCategory = categories.find(
         (category) => category.id === categoryId,
       );
-      const category = await updateCategoryApi(categoryId, input);
+      await updateCategoryApi(categoryId, input);
       const nextMembers = input.isShared ? input.members ?? [] : [];
-      const nextDisplayMembers = [
-        ...(input.previousMembers ?? previousCategory?.members ?? []).filter(
-          (member) => member.role === "OWNER",
-        ),
-        ...nextMembers,
-      ];
 
       await syncSharedCategoryMembers(
         categoryId,
@@ -144,40 +130,9 @@ export const useCalendarCategoryActions = ({
         Boolean(input.isShared),
       );
 
-      setCategories((previousCategories) =>
-        category
-          ? previousCategories.map((previousCategory) =>
-              previousCategory.id === categoryId
-                ? {
-                    ...category,
-                    items: previousCategory.items,
-                    tasks: previousCategory.tasks,
-                    isPublic:
-                      input.isPublic ??
-                      category.isPublic ??
-                      previousCategory.isPublic,
-                    isCompleted:
-                      input.isCompleted ??
-                      category.isCompleted ??
-                      previousCategory.isCompleted,
-                    isHidden:
-                      input.isHidden ??
-                      category.isHidden ??
-                      previousCategory.isHidden,
-                    isShared:
-                      input.isShared ??
-                      category.isShared ??
-                      previousCategory.isShared,
-                    members: input.isShared
-                      ? nextDisplayMembers
-                      : category.members ?? previousCategory.members,
-                  }
-                : previousCategory,
-            )
-          : updateCategoryInList(previousCategories, categoryId, input),
-      );
+      await reloadCalendarData();
     },
-    [categories, setCategories, syncSharedCategoryMembers],
+    [categories, reloadCalendarData, syncSharedCategoryMembers],
   );
 
   const toggleCategoryVisibility = useCallback(
@@ -197,16 +152,14 @@ export const useCalendarCategoryActions = ({
     async (categoryId: string) => {
       await deleteCategoryApi(categoryId);
 
-      setCategories((previousCategories) =>
-        previousCategories.filter((category) => category.id !== categoryId),
-      );
       setSelectedCategoryId((previousSelectedCategoryId) =>
         previousSelectedCategoryId === categoryId
           ? null
           : previousSelectedCategoryId,
       );
+      await reloadCalendarData();
     },
-    [setCategories, setSelectedCategoryId],
+    [reloadCalendarData, setSelectedCategoryId],
   );
 
   return {
