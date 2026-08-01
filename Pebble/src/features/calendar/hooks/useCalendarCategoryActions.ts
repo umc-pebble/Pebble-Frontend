@@ -107,14 +107,6 @@ export const useCalendarCategoryActions = ({
 
       const members = input.isShared ? input.members ?? [] : [];
 
-      await syncSharedCategoryMembers(
-        category.id,
-        [],
-        members,
-        false,
-        Boolean(input.isShared),
-      );
-
       setCategories((previousCategories) => [
         ...previousCategories,
         {
@@ -124,6 +116,18 @@ export const useCalendarCategoryActions = ({
         },
       ]);
       setSelectedCategoryId(null);
+
+      try {
+        await syncSharedCategoryMembers(
+          category.id,
+          [],
+          members,
+          false,
+          Boolean(input.isShared),
+        );
+      } catch (error) {
+        console.error("Failed to sync shared category members:", error);
+      }
 
       return category;
     },
