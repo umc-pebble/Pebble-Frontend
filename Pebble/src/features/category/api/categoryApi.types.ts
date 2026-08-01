@@ -38,6 +38,7 @@ export type CreateCategoryRequest = {
   imageUrl?: string | null;
   isPublic?: boolean;
   isCompleted?: boolean;
+  inviteUserIds?: number[];
 };
 
 export type UpdateCategoryRequest = {

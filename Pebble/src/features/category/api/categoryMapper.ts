@@ -73,12 +73,18 @@ export function mapCategoryResponseToCategory(
 export function mapCreateCategoryInputToRequest(
   input: CreateCategoryInput,
 ): CreateCategoryRequest {
+  const inviteUserIds =
+    input.isShared && input.members?.length
+      ? input.members.map((member) => member.id)
+      : undefined;
+
   return {
     name: input.title,
     color: input.accent,
     imageUrl: mapImageUrlToRequest(input.imageUrl),
     isPublic: input.isPublic,
     isCompleted: input.isCompleted,
+    inviteUserIds,
   };
 }
 
