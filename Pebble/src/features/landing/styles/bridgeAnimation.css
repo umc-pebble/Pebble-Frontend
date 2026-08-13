@@ -1,0 +1,23 @@
+/* src/features/landing/styles/bridgeAnimation.css */
+
+@keyframes landing-bridge-marquee {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+
+  to {
+    transform: translate3d(-1729px, 0, 0);
+  }
+}
+
+.landing-bridge-marquee {
+  animation: landing-bridge-marquee 28s linear infinite;
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .landing-bridge-marquee {
+    animation: none;
+    transform: none;
+  }
+}

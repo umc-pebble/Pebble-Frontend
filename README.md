@@ -11,7 +11,27 @@
 - **핵심 가치:** 
   - **할 일과 일정의 구조적 분리:** 오늘 할 일(Task)은 가볍게 나열하되, 프로젝트별 중요 일정(Milestone)은 캘린더 상에 독립된 이정표로 시각화합니다.
   - **계층 구조를 통한 맥락 부여:** 복잡한 세부 일정이 늘어나도 두꺼워지는 불편함 없이, 지금 하는 일이 어떤 목표의 일부인지 즉시 파악합니다.
-  - **개인 최적화 에센셜 프로덕트:** 무거운 팀 협업 기능을 완전히 배제하고 직관적인 UI로 즉시 실행과 회고에만 몰입할 수 있습니다.
+  - **개인 일정 중심의 가벼운 공유:** 개인 일정 관리 흐름을 중심에 두면서 필요한 카테고리만 친구와 공유해 함께 관리할 수 있습니다.
+
+<br/>
+
+## 🚀 배포 링크 (Deployment)
+- **[Pebble 배포 페이지 바로가기](https://pebble-frontend-six.vercel.app/)**
+
+### CI/CD 배포 흐름
+
+```text
+Pull Request
+  → Frontend Quality (type-check, lint, test, build)
+  → develop Merge
+  → Elric Fork develop 자동 동기화
+  → Vercel Production 자동 배포
+```
+
+- `.github/workflows/frontend-quality.yml`: PR 및 `develop` Push에서 타입 검사, 린트, 자동화 테스트, 프로덕션 빌드를 검증합니다.
+- `.github/workflows/sync-elric-fork.yml`: 원본 저장소의 `develop` 변경을 배포용 Fork의 `develop` 브랜치로 동기화합니다.
+- Vercel은 배포용 Fork의 `develop` 브랜치를 감지해 최신 프론트엔드를 자동 배포합니다.
+- Fork 동기화 인증값은 GitHub Actions Secret인 `ELRIC_FORK_SYNC_TOKEN`으로 관리하며 저장소에 노출하지 않습니다.
 
 <br/>
 
@@ -19,10 +39,10 @@
 
 | 이름 | 역할 및 담당 도메인 | Github |
 | :---: | :--- | :--- |
-| **엘릭 / 심민식** | • 프론트엔드 팀장<br>• 깃허브 레포 초기 셋팅, 구조 설계 등<br>• 메인페이지 | [@minsik1014](https://github.com/minsik1014) |
+| **엘릭 / 심민식** | • 프론트엔드 팀장<br>• 깃허브 레포 초기 설정 및 구조 설계<br>• 홈·메인 캘린더 페이지 | [@minsik1014](https://github.com/minsik1014) |
 | **심바 / 이채린** | • 랜딩페이지, 설정페이지 | [@Chae102](https://github.com/Chae102) |
-| **요나 / 오윤아** | • 로그인 페이지 | [@yoona24](https://github.com/yoona24) |
-| **키위 / 윤규리** | • 마이페이지 | [@kiwi13ird](https://github.com/kiwi13ird) |
+| **요나 / 오윤아** | • 인증 및 리포트 페이지 | [@yoona24](https://github.com/yoona24) |
+| **키위 / 윤규리** | • 마이페이지 및 친구 페이지 | [@kiwi13ird](https://github.com/kiwi13ird) |
 
 <br/>
 
@@ -30,25 +50,37 @@
 
 | 화면명 (Screen) | 경로 (Path) | 주요 기능 및 설명 |
 | :--- | :--- | :--- |
-| **스플래시 / 로그인** | `/login` | • 소셜 로그인 연동(카카오, 구글) 및 신규 유저 온보딩 플로우 진입점 |
-| **홈 (대시보드)** | `/` | • 현재 진행 중인 Milestone 및 Task 목록 조회<br>• 진행률 기반 프로그레스 바 및 캘린더 렌더링 |
-| **소셜 (탐색)** | `/social` | • 닉네임#고유태그 기반 유저 검색, 상호 팔로우 및 활동 잔디밭 열람 |
-| **마이페이지** | `/mypage` | • 사용자 프로필 관리 및 월말 결산 리포트(GIF) 확인 |
-| **프리미엄** | `/premium` | • 구독 결제 플로우(월 990원) 및 멤버십 권한 관리 |
+| **랜딩** | `/landing` | • 서비스 소개, 핵심 기능 안내, 로그인/회원가입 진입 |
+| **로그인** | `/login` | • 소셜 로그인 및 일반 로그인 플로우 진입점 |
+| **회원가입** | `/signup`, `/profile-setup`, `/signup-complete` | • 계정 생성, 프로필 설정, 가입 완료 플로우 |
+| **비밀번호 찾기** | `/forgot-password` | • 이메일 입력 및 비밀번호 재설정 플로우 |
+| **홈** | `/`, `/home` | • 내 캘린더와 친구의 공개 캘린더 전환 조회<br>• 친구 일정 미조회 상태, 활동 기록, 친구 요청 수 표시 |
+| **메인 캘린더** | `/calendar` | • Category, Milestone, Task 조회/생성/수정/삭제<br>• 사이드바와 월간 캘린더 기반 일정 렌더링<br>• API 로딩, 에러, 빈 상태 UI 처리 |
+| **친구** | `/friends` | • 친구 검색, 요청, 수락 및 친구 관계 관리 |
+| **마이페이지** | `/my`, `/my/profile` | • 사용자 프로필 및 프로필 이미지 편집, 활동·리포트 진입 |
+| **설정** | `/settings` | • 알림 설정, 화면 설정, 계정 관리 등 사용자 환경 설정 |
+| **월말 리포트** | `/report/*` | • 월간 활동, 카테고리·요일·친구 통계와 요약 이미지 생성 |
+| **이메일 인증** | `/email/verify` | • 이메일 인증 결과 확인 및 후속 화면 이동 |
 
 <br/>
 
 ## 🎨 Design System
--> **[프로젝트 디자인 시스템 명세서 (design.md) 바로가기](./design.md)**
+- **[프로젝트 디자인 시스템 명세서 (design.md) 바로가기](./design.md)**
 
 <br/>
 
 ## Implementation Highlights
-Pebble 프론트엔드는 데이터가 누적되어도 쾌적한 사용성을 유지하기 위해 **렌더링 최적화**와 **상태 관리**에 집중합니다.
+Pebble 프론트엔드는 **기능 중심 구조**, **API 계층 분리**, **디자인 토큰 기반 UI**를 기준으로 구현합니다.
 
-* **트리 구조 상태 관리:** 하위 Task 완료 시 상위 Milestone의 진행률이 즉각적으로 자동 재계산되는 유기적인 상태 관리를 `Zustand`로 구현합니다.
-* **렌더링 최적화 (Virtual Scroll):** 무한정 쌓일 수 있는 할 일 목록의 특성을 고려하여, `useMemo`와 가상 스크롤(Virtual Scroll) 기법을 도입해 브라우저 성능 저하(DOM 과부하)를 방지합니다.
-* **디자인 시스템 연동:** 피그마의 동적 변수(Variables)를 `Tailwind CSS` 토큰으로 완벽하게 추출하여, 테마 전환 시 하드코딩 없이 즉각적이고 안정적인 UI 변경을 보장합니다.
+- **캘린더 API 상태 모델:** `calendarDataLoader`가 Category, Milestone, Task 조회와 응답 조합을 담당하고, `useCalendarState` 및 도메인별 액션 훅은 화면 상태와 변경 후 재조회를 관리합니다.
+- **Feature API Layer:** `features/category/api`, `features/milestone/api`, `features/task/api`에서 도메인별 API 요청과 응답 타입을 관리합니다.
+- **공통 API Client:** `services/api`에서 `VITE_API_BASE_URL`, 인증 토큰 주입, 공통 성공/실패 응답 타입을 처리합니다.
+- **도메인 타입 분리:** 전역 타입에서 Category, Milestone, Task 역할을 구분하고, 화면 표시용 색상/폭 값은 별도 스타일 필드로 분리해 데이터 모델과 UI 책임을 명확히 합니다.
+- **디자인 시스템 연동:** `design.md`, `tailwind.config.ts`, `styles/index.css`의 토큰을 기준으로 피그마 UI를 구현하고, 카테고리 색상은 유틸 함수로 파생 색상/텍스트 색상을 계산합니다.
+- **이미지 크롭 공용화:** `components/ui/image-crop`에서 프로필 이미지와 카테고리 대표 이미지 크롭 로직을 공용으로 관리합니다.
+- **Feature 중심 컴포넌트 구성:** category, milestone, task가 각각 자기 도메인의 UI를 소유하고, 여러 도메인이 공유하는 캘린더 폼/선택 UI는 `features/calendar/`에 배치합니다.
+- **화면 단위 코드 스플리팅:** 라우트 진입점은 `React.lazy`로 분리하여 초기 번들 크기를 줄이고 필요한 화면만 지연 로딩합니다.
+- **폼 상태 책임 분리:** Category, Milestone, Task 폼의 초기화·제출·삭제 흐름은 feature 전용 훅에서 관리하고 모달 컴포넌트는 UI 조립에 집중합니다.
 
 ---
 
@@ -57,24 +89,23 @@ Pebble 프론트엔드는 데이터가 누적되어도 쾌적한 사용성을 �
 | 분류 | 기술 | 비고 |
 | :--- | :--- | :--- |
 | **Core** | ![React](https://img.shields.io/badge/React-18-blue) ![TypeScript](https://img.shields.io/badge/TypeScript-5.x-blue) | UI 라이브러리 및 언어 |
-| **Build** | ![Vite](https://img.shields.io/badge/Vite-5.x-purple) | 빌드 도구 및 빠른 HMR |
-| **State** | **Zustand** (Client), **TanStack Query** (Server) | 트리 구조 진행률 관리 및 서버 캐싱 |
+| **Build** | ![Vite](https://img.shields.io/badge/Vite-8.x-purple) | 빌드 도구 및 빠른 HMR |
+| **State** | React Hooks, **Zustand** | 캘린더 로컬/서버 응답 상태, 마이페이지 프로필 편집 상태 |
 | **Network** | **Axios** | HTTP 비동기 통신 |
 | **Style** | ![TailwindCSS](https://img.shields.io/badge/TailwindCSS-3.x-38B2AC) | 디자인 토큰 기반 유틸리티 CSS |
 | **Routing** | **React Router DOM** | SPA 라우팅 |
-| **Icons** | **lucide-react** | 경량 아이콘 라이브러리 |
-| **Util** | **date-fns** | 캘린더 구성 및 날짜 데이터 포맷팅 |
+| **Image** | **react-easy-crop** | 프로필/카테고리 이미지 크롭 UI |
+| **Chart / Export** | **Chart.js**, **react-chartjs-2**, **html-to-image** | 리포트 차트 렌더링 및 이미지 저장 |
+| **Icons** | **lucide-react**, SVG React Component | 공용 아이콘 및 서비스 전용 SVG |
 | **Pkg Mgr** | **npm** | 패키지 매니저 |
-| **Quality** | ESLint, Prettier | 코드 품질 및 포맷팅 |
-
-<br/>
+| **Quality** | oxlint, TypeScript, Vitest, GitHub Actions | 코드 품질, 타입·핵심 로직 테스트, 프로덕션 빌드 자동 검증 |
 
 ## ⚙️ Prerequisites (사전 요구 사항)
 
 원활한 프로젝트 실행을 위해 아래의 환경이 세팅되어 있어야 합니다.
 
-* **Node.js:** `v20.x` (LTS) 이상
-* **npm:** `v10.x` 이상
+- **Node.js:** `v20.x` (LTS) 이상
+- **npm:** `v10.x` 이상
 > **Tip:** 팀원 간 노드 버전을 통일하기 위해 [NVM(Node Version Manager)](https://github.com/nvm-sh/nvm) 사용을 적극 권장합니다. 터미널에서 `nvm use 20` 명령어로 버전을 맞춰주세요.
 
 <br/>
@@ -83,7 +114,7 @@ Pebble 프론트엔드는 데이터가 누적되어도 쾌적한 사용성을 �
 
 ### 1. 프로젝트 클론
 ```bash
-git clone git@github.com:Team-EL/Pebble-Frontend.git
+git clone git@github.com:umc-pebble/Pebble-Frontend.git
 cd Pebble-Frontend
 ```
 
@@ -94,11 +125,16 @@ npm install
 ```
 > 팀원들과 정확히 동일한 의존성 버전을 설치하려면 `npm ci`를 권장합니다.
 
-### 3. 환경 변수 설정 (.env)
-Pebble 폴더 디렉토리에 `.env` 파일을 생성하고 서버 및 소셜 로그인 키 값을 입력하세요.
+### 3. 환경 변수 설정
+Pebble 폴더 디렉토리에 `.env.local` 파일을 생성하고 서버 및 소셜 로그인 키 값을 입력하세요.
+공유 가능한 기본 예시는 `Pebble/.env.example`을 참고합니다.
+
 ```env
-VITE_API_BASE_URL=http://localhost:8080/api/v1
+VITE_API_BASE_URL=https://pebble.it.kr/api/v1
+VITE_GOOGLE_CLIENT_ID=
+VITE_NAVER_CLIENT_ID=
 ```
+로컬과 배포 환경(Vercel)은 동일한 키 이름을 사용하며, 실제 Client ID는 저장소에 커밋하지 않습니다.
 
 ### 4. 개발 서버 실행
 ```bash
@@ -116,43 +152,78 @@ Pebble 프론트엔드는 유지보수와 협업 효율을 극대화하기 위�
 Pebble/src/
 ├── assets/              # 아이콘, 이미지 등 정적 리소스
 ├── components/          # 도메인 종속성이 없는 공용 UI / 레이아웃
-│   ├── layout/          # GNB, Sidebar, AppLayout
-│   └── ui/              # Button, Input, Modal (디자인 토큰 기반)
+│   ├── feedback/        # 전역 오류 토스트 및 네트워크 상태 처리
+│   ├── layout/          # GNB, MainLayout, 공통 뷰포트 훅
+│   ├── theme/           # 사용자 테마 초기화
+│   └── ui/              # 공용 모달, 버튼, 날짜 선택기, 이미지 크롭
+│       ├── image-crop/  # 프로필·카테고리 이미지 크롭
+│       └── schedule-date-picker/ # 날짜 유형·월간 달력 UI
 │
-├── types/               # 전역 공통 타입 정의 (pebble.d.ts 등)
+├── types/               # 전역 공통 타입 정의 (Category, Milestone, Task 등)
+│
+├── hooks/               # 도메인에 종속되지 않는 재사용 커스텀 훅
+├── utils/               # 날짜, 색상 토큰 등 순수 유틸리티 함수
+├── services/            # API client, auth token, 공통 응답/에러 타입
 │
 ├── features/            # 핵심 비즈니스 도메인
-│   ├── auth/            # 소셜 로그인 (카카오, 구글), 온보딩
-│   ├── category/        # 카테고리 CRUD
-│   ├── milestone/       # 마일스톤 관리 및 캘린더 UI
-│   ├── task/            # 투두 생성, 체크, 가상 스크롤 렌더링
+│   ├── auth/            # 일반·소셜 로그인 (구글, 네이버), 회원가입
+│   ├── calendar/        # 캘린더 상태 모델, 컨텍스트, 페이지 조립용 컴포넌트/유틸
+│   │   ├── components/  # 데스크톱·모바일 캘린더 및 공유 폼/선택 UI
+│   │   ├── context/     # MainLayout과 캘린더 페이지가 공유하는 상태 컨텍스트
+│   │   ├── hooks/       # 상태 조립, 도메인 액션, 사이드바 편집 상태
+│   │   ├── services/    # 월별·사용자별 캘린더 데이터 조회 및 조합
+│   │   └── utils/       # 캘린더 상태 변경 순수 함수
+│   ├── category/        # 카테고리 CRUD, 색상 선택, 이미지/멤버 UI/API
+│   │   ├── api/         # 카테고리, 친구 목록, 이미지 업로드 API 및 mapper
+│   │   ├── components/  # 카테고리 화면 및 모달 컴포넌트
+│   │   ├── hooks/       # 상세·폼 멤버 상태 및 비동기 흐름
+│   │   └── utils/       # 변경 필드 계산 및 멤버 변환 순수 함수
+│   ├── milestone/       # 마일스톤 관리 및 캘린더/사이드바 UI/API
+│   │   ├── api/         # 마일스톤 API, 응답 타입, mapper
+│   │   ├── components/  # CalendarBoard, 아코디언, 상세 UI
+│   │   └── hooks/       # 마일스톤 폼 상태 및 제출 흐름
+│   ├── task/            # 태스크 생성, 편집, 체크 UI/API
+│   │   ├── api/         # 독립 태스크/하위 태스크 API, 응답 타입, mapper
+│   │   ├── components/  # 태스크 폼, 단일 태스크 섹션 등
+│   │   ├── hooks/       # 태스크 폼 상태 및 관계 선택 흐름
+│   │   └── utils/       # 태스크 완료 여부 계산
+│   ├── activity/        # 사용자 활동 조회 API와 날짜별 활동 변환
+│   ├── home/            # 내·친구 캘린더 전환, 프로필 스트립 및 활동 요약
+│   ├── friends/         # 친구 관계 API와 동기화 유틸
+│   ├── mypage/          # 마이페이지 프로필, 사용자 활동 UI 및 Zustand 스토어
+│   ├── alarm/           # 알림 목록, 상태 및 API
 │   ├── grass/           # 잔디밭 컴포넌트 및 로직
-│   └── report/          # 월말 리포트 (GIF 생성 및 열람)
+│   ├── landing/         # 랜딩 페이지 섹션 및 훅
+│   ├── report/          # 월말 리포트 조회, 차트 및 이미지 저장
+│   └── settings/        # 설정 화면 섹션 및 토글/세그먼트 컴포넌트
 │
 ├── pages/               # 라우팅 진입점 (features 조합)
-│   ├── home/
-│   ├── social/          # 팔로우 및 타 유저 잔디밭 열람
+│   ├── calendar/        # 메인 캘린더 페이지
+│   ├── friends/         # 친구 관리 페이지
+│   ├── home/            # 내·친구 캘린더 홈
+│   ├── landing/         # 랜딩 페이지
 │   ├── mypage/
-│   └── premium/         # 구독 결제 및 관리
+│   └── settings/        # 설정 및 이메일 인증 페이지
 │
-├── store/               # 전역 클라이언트 상태 (usePebbleStore.ts)
-├── hooks/               # 재사용 커스텀 훅 (useTheme, useVirtualScroll)
-├── utils/               # 유틸리티 함수 (날짜 계산, 진행률 계산 로직)
 ├── styles/              # 전역 스타일 (index.css, CSS Variables)
 └── App.tsx
 ```
 
 ### 개발 원칙
 1. **Colocation:** 특정 도메인(예: task)에서만 쓰이는 컴포넌트와 훅은 `features/task/` 내부에 응집시킵니다.
-2. **Absolute Import:** 상대 경로(`../../`) 대신 `@/features/...` 형태의 절대 경로를 사용합니다.
+2. **Shared UI First:** 버튼, 모달 액션, 날짜 선택기처럼 도메인 지식이 없는 UI는 `components/ui/`에 둡니다.
+3. **Feature Shared Layer:** 여러 캘린더 하위 도메인(category/milestone/task)이 함께 쓰는 타입, 선택 UI, 상태 유틸은 `features/calendar/`에 둡니다.
+4. **API Layer 분리:** API 요청, 응답 타입, mapper는 각 feature의 `api/` 폴더에 두고, 공통 client만 `services/api/`에서 관리합니다.
+5. **Pure Utils:** 날짜 포맷, 색상 파생 계산처럼 화면 상태와 무관한 함수는 `utils/`에 둡니다.
+6. **Absolute Import:** 상대 경로(`../../`) 대신 `@/features/...` 형태의 절대 경로를 사용합니다.
 
 <br/>
 
 ## Contribution Guide (협업 규칙)
 
 ### 1. Git Flow 및 브랜치 전략
-* `main`: 실제 배포되는 프로덕션 버전
-* `develop`: 개발 및 통합 중인 코드 (PR 대상)
+- `main`: 실제 배포되는 프로덕션 버전
+- `develop`: 개발 및 통합 중인 코드 (PR 대상)
 
 **📌 브랜치 명명 규칙: `타입/기능명_닉네임`**
 <br/>
@@ -166,27 +237,42 @@ Pebble/src/
 | `refactor` | 비즈니스 로직 및 코드 리팩토링 | `refactor/api-logic_Elric` |
 | `docs` | README 등 문서 수정 | `docs/readme_Elric` |
 
+### 1-1. 이슈 생성 기준
+- `feat`, `design`, `refactor`, `docs`처럼 기능 범위가 있거나 리뷰 맥락이 필요한 작업은 이슈를 먼저 생성하고 PR의 `관련 이슈`에 연결합니다.
+- 단순 버그 수정인 `fix` 브랜치는 이슈 없이 PR을 올릴 수 있습니다.
+- 이슈 없이 올리는 `fix` PR은 PR 본문 `관련 이슈`에 `없음 - 단순 버그 수정`처럼 사유를 명시합니다.
+- 이미 머지된 PR 이후 누락된 수정이 발생하면 최신 `develop` 기준으로 별도 `fix/기능명_닉네임` 브랜치를 만들고, 해당 수정만 포함한 PR을 새로 올립니다.
+
 ### 2. Commit Convention
 커밋 메시지는 **Conventional Commits**를 따르며 직관적으로 작성합니다.
-* `feat: Category 렌더링 및 CRUD 로직 구현`
-* `fix: Milestone 삭제 시 하위 Task 고아 객체 에러 수정`
+- `feat: Category 렌더링 및 CRUD 로직 구현`
+- `fix: Milestone 삭제 시 하위 Task 고아 객체 에러 수정`
 
 ### 3. Code Quality (PR 전 필수 확인)
 원격 저장소에 Push 하거나 PR을 생성하기 전, 로컬에서 터미널을 통해 반드시 에러 여부를 점검합니다.
 
 ```bash
-npm run type-check && npm run lint
+npm run type-check && npm run lint && npm run test && npm run build
 ```
-* `type-check`: TypeScript 타입 불일치 검사
-* `lint`: ESLint 코드 컨벤션 및 미사용 변수 검사
+- `type-check`: TypeScript 타입 불일치 검사
+- `lint`: oxlint 기반 코드 컨벤션 및 미사용 변수 검사
+- `test`: Vitest 기반 날짜·색상·일정 정렬 핵심 로직 회귀 검사
+- `build`: 프로덕션 번들 및 Vercel 배포 가능 여부 검사
+
+`pull_request`와 `develop` 브랜치 Push 시에도 GitHub Actions가 동일한 명령을 실행하여 병합 전 품질을 자동 검증합니다.
 
 <br/>
 
 ## 🚀 PR 컨벤션 (Pull Request Convention)
 
 ### 1. PR 제목 규칙
-> **형식:** `태그: 작업 내용 요약 (#이슈번호)`
-> *예시: `feat: 매칭 인터랙션 완결 및 카드 레이아웃 최적화 (#36)`*
+**형식:** `태그: 작업 내용 요약 (#이슈번호)`
+
+**예시:** `feat: 매칭 인터랙션 완결 및 카드 레이아웃 최적화 (#36)`
+
+단순 `fix` PR처럼 연결 이슈가 없는 경우에는 이슈 번호를 생략할 수 있습니다.
+
+**예시:** `fix: 이미지 크롭 영역 빈 공간 노출 방지`
 
 | 태그 (Tag) | 설명 |
 | :--- | :--- |
@@ -205,16 +291,18 @@ npm run type-check && npm run lint
 4. **관련 이슈:** `Closes #이슈번호`로 자동 연동
 5. **기타:** 브랜치명 및 시각 자료(캡처/GIF), 기타 참고 사항 기록
 
+단순 `fix` PR처럼 연결 이슈가 없다면 `관련 이슈`에는 `없음 - 단순 버그 수정`을 작성합니다.
+
 ### 3. 코드 리뷰 규칙 (P-Rule)
 리뷰 코멘트 작성 시 앞단에 우선순위 태그를 달아 작성자의 수정 부담을 줄이고 의도를 명확히 전달합니다.
-* **`[P1] 필수:`** 버그, 아키텍처 규칙 위반 등 반드시 수정해야만 Merge 가능한 사항
-* **`[P2] 권장:`** 더 나은 구현 방법 제안 (작성자가 합당한 이유가 있다면 수정하지 않아도 무방)
-* **`[P3] 단순 의견:`** 코드에 대한 칭찬, 가벼운 제안 등 사소한 코멘트
+- `[P1] 필수:` 버그, 아키텍처 규칙 위반 등 반드시 수정해야만 Merge 가능한 사항
+- `[P2] 권장:` 더 나은 구현 방법 제안 (작성자가 합당한 이유가 있다면 수정하지 않아도 무방)
+- `[P3] 단순 의견:` 코드에 대한 칭찬, 가벼운 제안 등 사소한 코멘트
 
 ### 4. 머지(Merge) 조건
-* 팀원 중 **최소 1명 이상의 `Approve`**를 받아야 합니다.
-* 본인 로컬 터미널에서 타입 체크 및 린트(`npm run type-check`, `npm run lint`)를 통과해야 합니다.
-* 모든 피드백 반영이 끝난 후, **PR을 올린 본인이 직접 Merge** 하는 것을 원칙으로 합니다.
+- 팀원 중 최소 1명 이상의 `Approve`를 받아야 합니다.
+- 본인 로컬 터미널에서 타입 체크, 린트, 빌드(`npm run type-check`, `npm run lint`, `npm run build`)를 통과해야 합니다.
+- 모든 피드백 반영이 끝난 후, PR을 올린 본인이 직접 Merge하는 것을 원칙으로 합니다.
 
 <br/>
 

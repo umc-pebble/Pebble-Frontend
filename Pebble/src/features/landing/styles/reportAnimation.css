@@ -1,0 +1,53 @@
+
+.landing-report-text-reveal {
+  opacity: 0;
+  transform: translate3d(0, 64px, 0);
+
+  transition-property: opacity, transform;
+  transition-duration: 900ms, 900ms;
+  transition-timing-function: linear, linear;
+  transition-delay: 0ms;
+
+  backface-visibility: hidden;
+  will-change: opacity, transform;
+}
+
+.landing-report-text-reveal.is-visible {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+
+.landing-report-card-reveal {
+  opacity: 0;
+  transform: translate3d(0, 64px, 0);
+
+  transition-property: opacity, transform;
+  transition-duration: 500ms, 500ms;
+
+  /*
+   * opacity는 일정하게 나타나고,
+   * 위치 이동은 부드럽게 가속·감속합니다.
+   */
+  transition-timing-function:
+    linear,
+    ease-in-out;
+
+  transition-delay: 0ms;
+
+  backface-visibility: hidden;
+  will-change: opacity, transform;
+}
+
+.landing-report-card-reveal.is-visible {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .landing-report-text-reveal,
+  .landing-report-card-reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}

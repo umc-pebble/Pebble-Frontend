@@ -1,0 +1,31 @@
+name: Sync Elric Fork
+
+on:
+  push:
+    branches:
+      - develop
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: sync-elric-fork
+  cancel-in-progress: true
+
+jobs:
+  sync-fork:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout develop
+        uses: actions/checkout@v4
+        with:
+          ref: develop
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Push develop to Elric fork
+        run: |
+          git remote add elric-fork https://x-access-token:${{ secrets.ELRIC_FORK_SYNC_TOKEN }}@github.com/minsik1014/Pebble-Frontend.git
+          git push elric-fork HEAD:develop

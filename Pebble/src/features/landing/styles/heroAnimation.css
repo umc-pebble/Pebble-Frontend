@@ -1,0 +1,49 @@
+/* src/features/landing/styles/heroAnimation.css */
+
+@keyframes landing-hero-text-up {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 32px, 0);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes landing-hero-pop-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 20px, 0) scale(0.94);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+.landing-hero-text-up {
+  opacity: 0;
+  animation: landing-hero-text-up 1100ms
+    cubic-bezier(0.22, 1, 0.36, 1) both;
+  will-change: opacity, transform;
+}
+
+.landing-hero-pop-in {
+  opacity: 0;
+  transform-origin: center;
+  animation: landing-hero-pop-in 1200ms
+    cubic-bezier(0.22, 1, 0.36, 1) both;
+  will-change: opacity, transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .landing-hero-text-up,
+  .landing-hero-pop-in {
+    opacity: 1;
+    animation: none;
+    transform: none;
+  }
+}
